@@ -1,0 +1,21 @@
+---
+import { markHTMLString } from "./utils";
+import { getIteration } from "./data";
+import type { PathArray, PathNode, PathTerminal } from "./data";
+
+interface Props<T> {
+  items: PathArray<T>;
+  children: (value: PathNode<T>, index: PathTerminal) => string;
+}
+
+let html = "";
+const { items } = Astro.props;
+const [start, itemVar, indexVar, end] = getIteration(items);
+if (Astro.slots.has("default")) {
+  html = await Astro.slots.render("default", [itemVar, indexVar]);
+}
+---
+
+{markHTMLString(start)}
+<Fragment set:html={html} />
+{markHTMLString(end)}

@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest",
-    "compile": "tsc",
+    "build": "tsc",
     "lint": "eslint --ext .astro,.js,.jsx,.cjs,.ts,.tsx,.cts .",
     "typecheck": "tsc --noEmit"
   },
@@ -16,7 +16,8 @@
     "url": "git+https://github.com/sijad/astro-stencil.git"
   },
   "files": [
-    "libs/*"
+    "libs/*",
+    "src/*"
   ],
   "keywords": [
     "astro-component",

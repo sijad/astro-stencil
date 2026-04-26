@@ -5,31 +5,31 @@ function pathToString(path: string[]) {
   return `$${path.map((p, i) => (i ? `['${p}']` : p)).join("")}`;
 }
 
-const phpRenderer: Renderer = {
+const bladeRenderer: Renderer = {
   getVar(path: string[]): string {
     return pathToString(path);
   },
 
   getVarPrint(path: string[]): string {
-    return `<?php echo htmlspecialchars(${pathToString(path)}); ?>`;
+    return `{{ ${pathToString(path)} }}`;
   },
 
   getUnescapedVarPrint(path: string[]): string {
-    return `<?php echo ${pathToString(path)}; ?>`;
+    return `{{!! ${pathToString(path)} !!}}`;
   },
 
   getIter(path: string[]) {
     const itemVar = "iter";
     const indexVar = "i";
     return [
-      `<?php foreach(${this.getVar(path)} as $${indexVar} => $${itemVar}): ?>`,
+      `@foreach(${this.getVar(path)} as $${indexVar} => $${itemVar})`,
       itemVar,
       indexVar,
-      "<?php endforeach; ?>",
+      "@endforeach",
     ];
   },
 };
 
 export function createDataSource<T>(): PathNode<T> {
-  return createDataProxy<T>(phpRenderer);
+  return createDataProxy<T>(bladeRenderer);
 }

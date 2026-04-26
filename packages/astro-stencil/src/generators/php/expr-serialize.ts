@@ -1,4 +1,4 @@
-import { ASTNode, hasLowerPrecedence } from "../../expr";
+import { ASTNode, hasLowerPrecedence } from "../../expr.js";
 
 export function serialize(node: ASTNode): string {
   switch (node.type) {

@@ -1,16 +1,16 @@
-import { markHTMLString } from "../../utils";
-import { expr, Expression, when as exprWhen } from "../../expr";
-import { serialize } from "./expr-serialize";
+import { markHTMLString } from "../../utils.js";
+import { expr } from "../../expr.js";
+import { serialize } from "./expr-serialize.js";
 
-export function when(builder: (e: typeof expr) => Expression) {
-  const { ast } = exprWhen(builder);
+export function when(...args: Parameters<typeof expr>) {
+  const { node } = expr(...args);
 
   return (onTrue: unknown, onFalse?: unknown) => {
     return [
-      markHTMLString(`<?php if(${serialize(ast)}): ?>`),
+      markHTMLString(`{{ if(${serialize(node)}): }}`),
       onTrue,
-      ...(onFalse ? [markHTMLString(`<?php else: ?>`), onFalse] : []),
-      markHTMLString(`<?php endif; ?>`),
+      ...(onFalse ? [markHTMLString(`{{ else: }}`), onFalse] : []),
+      markHTMLString(`{{ endif }}`),
     ];
   };
 }

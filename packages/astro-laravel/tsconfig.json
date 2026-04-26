@@ -1,6 +1,5 @@
 {
   "extends": "@repo/typescript-config/base.json",
-  "include": ["./src/**/*"],
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "lib"

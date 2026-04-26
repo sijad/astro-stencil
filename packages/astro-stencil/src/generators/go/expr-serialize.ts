@@ -1,4 +1,4 @@
-import { ASTNode } from "../../expr";
+import { ASTNode } from "../../expr.js";
 
 export function serialize(node: ASTNode): string {
   switch (node.type) {

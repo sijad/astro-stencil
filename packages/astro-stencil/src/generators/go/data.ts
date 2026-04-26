@@ -1,5 +1,5 @@
-import { createDataProxy, PathNode } from "../../data";
-import { Renderer } from "../../renderer";
+import { createDataProxy, PathNode } from "../../data.js";
+import { Renderer } from "../../renderer.js";
 
 function pathToString(path: string[]) {
   return `${path.map((p) => (p.startsWith("$") ? p : `.${p}`)).join("")}`;
@@ -12,6 +12,10 @@ const renderer: Renderer = {
 
   getVarPrint(path: string[]) {
     return `{{${pathToString(path)}}}`;
+  },
+
+  getUnescapedVarPrint(path: string[]) {
+    return `{{${pathToString(path)} | safeHTML}}`;
   },
 
   getIter(path: string[]) {

@@ -1,0 +1,41 @@
+{
+  "name": "astro-laravel",
+  "version": "0.0.1",
+  "description": "Astro adapter to generate type safe blade templates.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sijad/astro-stencil.git"
+  },
+  "keywords": [
+    "astro-component",
+    "astro-adapter",
+    "php",
+    "blade",
+    "laravel"
+  ],
+  "author": "Sajjad Hashemian",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sijad/astro-stencil/issues"
+  },
+  "homepage": "https://github.com/sijad/astro-stencil/packages/astro-laravel#readme",
+  "dependencies": {
+    "fast-glob": "^3.3.3",
+    "shiki": "^4.0.2"
+  },
+  "devDependencies": {
+    "@repo/biome-config": "workspace:^",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^25.0.10",
+    "astro": "^6.1.9"
+  },
+  "peerDependencies": {
+    "astro": "^6.1.9"
+  }
+}

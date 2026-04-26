@@ -1,5 +1,5 @@
-import type { Renderer } from "./renderer";
-import { markHTMLString } from "./utils";
+import type { Renderer } from "./renderer.js";
+import { markHTMLString } from "./utils.js";
 
 const PROXY_MARKER = Symbol("PathNodeProxy");
 
@@ -11,7 +11,7 @@ export interface PathTerminal {
 }
 
 export function isPathNodeProxy<T>(value: unknown): value is PathNode<T> {
-  return !!value?.[PROXY_MARKER];
+  return Boolean(value && (value as any)["PROXY_MARKER"]);
 }
 
 declare const pathArray: unique symbol;

@@ -1,3 +1,3 @@
-[submodule "tests/private"]
-	path = tests/private
+[submodule "packages/astro-stencil/tests/private"]
+	path = packages/astro-stencil/tests/private
 	url = git@github.com:sijad/astro-stencil-tests.git

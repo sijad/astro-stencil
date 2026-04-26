@@ -1,4 +1,5 @@
-import type { Renderer } from "./types";
+import { createDataProxy, type PathNode } from "../../data";
+import type { Renderer } from "../../renderer";
 
 function pathToString(path: string[]) {
   return `$${path.map((p, i) => (i ? `['${p}']` : p)).join("")}`;
@@ -25,4 +26,6 @@ const phpRenderer: Renderer = {
   },
 };
 
-export default phpRenderer;
+export function createDataSource<T>(): PathNode<T> {
+  return createDataProxy<T>(phpRenderer);
+}

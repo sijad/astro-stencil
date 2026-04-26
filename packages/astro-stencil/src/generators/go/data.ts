@@ -1,10 +1,11 @@
-import type { Renderer } from "./types";
+import { createDataProxy, PathNode } from "../../data";
+import { Renderer } from "../../renderer";
 
 function pathToString(path: string[]) {
   return `${path.map((p) => (p.startsWith("$") ? p : `.${p}`)).join("")}`;
 }
 
-const goRenderer: Renderer = {
+const renderer: Renderer = {
   getVar(path: string[]) {
     return pathToString(path);
   },
@@ -18,4 +19,6 @@ const goRenderer: Renderer = {
   },
 };
 
-export default goRenderer;
+export function createDataSource<T>(): PathNode<T> {
+  return createDataProxy<T>(renderer);
+}

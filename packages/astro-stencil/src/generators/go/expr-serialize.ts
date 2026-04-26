@@ -1,5 +1,4 @@
-import { markHTMLString } from "../utils";
-import { expr, Expression, when as exprWhen, type ASTNode } from "../expr";
+import { ASTNode } from "../../expr";
 
 export function serialize(node: ASTNode): string {
   switch (node.type) {
@@ -44,17 +43,4 @@ export function serialize(node: ASTNode): string {
       }
     }
   }
-}
-
-export function when(builder: (e: typeof expr) => Expression) {
-  const { ast } = exprWhen(builder);
-
-  return (onTrue: unknown, onFalse?: unknown) => {
-    return [
-      markHTMLString(`<?php if(${serialize(ast)}): ?>`),
-      onTrue,
-      ...(onFalse ? [markHTMLString(`<?php else: ?>`), onFalse] : []),
-      markHTMLString(`<?php endif; ?>`),
-    ];
-  };
 }

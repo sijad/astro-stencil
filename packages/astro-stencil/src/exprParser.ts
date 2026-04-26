@@ -1,5 +1,5 @@
 import { isPathNodeProxy } from "./data";
-import { Expression, type ASTNode, type Operator } from "./expr";
+import { Expression, type ASTNode } from "./expr";
 
 type Token =
   | { type: "literal"; value: boolean | number | string }

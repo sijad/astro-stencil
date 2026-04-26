@@ -1,0 +1,41 @@
+{
+  "name": "astro-stencil",
+  "version": "0.0.1",
+  "description": "Astro-powered template generator for multi-engines",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "lint": "biome check --write",
+    "build": "tsc",
+    "type-check": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sijad/astro-stencil.git"
+  },
+  "files": [
+    "libs/*",
+    "src/*"
+  ],
+  "keywords": [
+    "astro-component",
+    "astro-adapter"
+  ],
+  "author": "Sajjad Hashemian",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sijad/astro-stencil/issues"
+  },
+  "homepage": "https://github.com/sijad/astro-stencil#readme",
+  "devDependencies": {
+    "@repo/biome-config": "workspace:^",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^25.0.10",
+    "@vitest/coverage-v8": "^4.0.17",
+    "astro": "^5.16.12",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17"
+  }
+}

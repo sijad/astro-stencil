@@ -1,11 +1,4 @@
-import {
-  mkdir,
-  rename,
-  rm,
-  symlink,
-  unlink,
-  writeFile,
-} from "node:fs/promises";
+import { mkdir, rename, rm, writeFile } from "node:fs/promises";
 import type { AddressInfo } from "node:net";
 import { basename, dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -20,7 +13,7 @@ import {
 } from "./utils.js";
 
 interface Options {
-  output?: string;
+  installationDir?: string;
   devProxyTarget?: string;
   viewsDirPath?: string;
   publicDirPath?: string;
@@ -28,19 +21,19 @@ interface Options {
 }
 
 export default function createIntegration({
-  output = "./laravel/",
+  installationDir = "./laravel/",
   devProxyTarget,
-  publicDirPath = "./public/assets/",
   viewsDirPath = "./resources/views/",
+  publicDirPath = "./public/",
   devServerTarget,
 }: Options = {}): AstroIntegration {
   let addr: AddressInfo | undefined = devServerTarget
     ? parseAddressInfo(devServerTarget)
     : undefined;
   let srcDir: string;
-  let pubDir: string;
   let routes: IntegrationResolvedRoute[] = [];
-  const viewsDir = join(output, viewsDirPath);
+  const viewsDir = join(installationDir, viewsDirPath);
+  const assetsDir = join(installationDir, publicDirPath, "_astro");
 
   async function createDevTemplate(f: string) {
     const themePath = join(viewsDir, f);
@@ -59,7 +52,7 @@ $__getDev = function() use ($__data) {
   $path = '/${f}';
 
   $code = file_get_contents($base . $path, false, $context);
-  $code = str_replace('@vite', '@@vite', $code);
+  $code = str_replace('src="/@', 'src="/@@', $code);
 
   ob_start();
 
@@ -67,16 +60,16 @@ $__getDev = function() use ($__data) {
     echo Blade::render($code, $__data);
   } catch(Throwable $e) {
     ob_clean();
-    header('X-Error-AWP: 1');
+    header('X-Error-AStencil: 1');
     http_response_code(500);
-    echo '/* awp-error-start */';
+    echo '/* a-stencil-error-start */';
     echo json_encode([
       'message' => $e->getMessage(),
       'file' => '${f}',
       'line' => $e->getLine(),
       'code' => $code,
     ]);
-    echo '/* awp-error-end */';
+    echo '/* a-stencil-error-end */';
     die;
   }
 
@@ -101,36 +94,22 @@ $__getDev();`;
       await createDevTemplate(f);
     });
 
-    // const pubFiles = await glob(join(pubDir, "*"), { onlyFiles: false });
-    // pubFiles.forEach((f) => {
-    //   const fileName = basename(f);
-    //   const outPath = join(publicDirPath, fileName);
-    //
-    //   promises.push(symlink(f, outPath));
-    // });
-
     await Promise.all(promises);
   }
 
   return {
     name: "astro-laravel",
     hooks: {
-      "astro:config:setup": ({ updateConfig, addMiddleware }) => {
+      "astro:config:setup": ({ updateConfig }) => {
         updateConfig({
           output: "static",
           build: {
             format: "file",
           },
         });
-
-        addMiddleware({
-          entrypoint: "astro-laravel/lib/middleware.js",
-          order: "pre",
-        });
       },
       "astro:config:done": ({ setAdapter, config }) => {
         srcDir = fileURLToPath(config.srcDir);
-        pubDir = fileURLToPath(config.publicDir);
         setAdapter({
           name: "astro-laravel",
           entrypointResolution: "auto",
@@ -192,13 +171,14 @@ $__getDev();`;
           ]),
         );
 
+        await rm(assetsDir, { recursive: true, force: true });
         await rm(viewsDir, { recursive: true, force: true });
         await mkdir(viewsDir, { recursive: true });
 
         server.watcher.on("all", async (event, entry) => {
           const relPath = relative(join(srcDir, "pages"), entry);
 
-          // check if file is .php.astro and inside src/pages/
+          // check if file is blade.php.astro and inside src/pages/
           if (
             entry.endsWith(".blade.php.astro") &&
             relPath === basename(entry)
@@ -210,16 +190,6 @@ $__getDev();`;
             } else if (event === "unlink") {
               await rm(join(viewsDir, basename(phpPath)), { force: true });
             }
-          } else if (
-            // check if entry is inside public dir
-            relative(pubDir, entry) === basename(entry)
-          ) {
-            // const themePath = join(publicDirPath, basename(entry));
-            // if (event === "add" || event === "addDir") {
-            //   await symlink(entry, themePath);
-            // } else if (event === "unlink" || event === "unlinkDir") {
-            //   await unlink(themePath);
-            // }
           }
         });
       },
@@ -236,8 +206,9 @@ $__getDev();`;
       "astro:build:done": async ({ dir: _dir, assets }) => {
         const dir = fileURLToPath(_dir);
 
+        await rm(assetsDir, { recursive: true, force: true });
         await rm(viewsDir, { recursive: true, force: true });
-        await rename(dir, viewsDir);
+        await mkdir(viewsDir, { recursive: true });
 
         for (const route of routes) {
           const dists = assets.get(route.pattern);
@@ -256,9 +227,12 @@ $__getDev();`;
             const themePath = join(viewsDir, relative(dir, path));
             const finalName = themePath.slice(0, -5);
 
-            await rename(themePath, finalName);
+            await rename(path, finalName);
           }
         }
+
+        const outputDir = join(dir, "_astro");
+        await rename(outputDir, assetsDir);
       },
     },
   };

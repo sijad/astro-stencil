@@ -218,9 +218,9 @@ export function errorHandlerModifier(webSocketSend: (msg: unknown) => void) {
     _req: IncomingMessage,
     res: ServerResponse,
   ) {
-    if (res.statusCode === 500 && res.hasHeader("X-Error-AWP")) {
-      const startMarker = "/* awp-error-start */";
-      const endMarker = "/* awp-error-end */";
+    if (res.statusCode === 500 && res.hasHeader("X-Error-AStencil")) {
+      const startMarker = "/* a-stencil-error-start */";
+      const endMarker = "/* a-stencil-error-end */";
 
       const startIndex = content.indexOf(startMarker);
       const endIndex = content.indexOf(endMarker);

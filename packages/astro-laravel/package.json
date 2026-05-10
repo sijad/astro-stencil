@@ -1,6 +1,6 @@
 {
   "name": "astro-laravel",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Astro adapter to generate type safe blade templates.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -8,6 +8,10 @@
   "scripts": {
     "build": "tsc"
   },
+  "files": [
+    "lib",
+    "src"
+  ],
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/sijad/astro-stencil.git"

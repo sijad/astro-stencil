@@ -23,7 +23,7 @@ interface Options {
 export default function createIntegration({
   installationDir = "./laravel/",
   devProxyTarget,
-  viewsDirPath = "./resources/views/",
+  viewsDirPath = "./resources/views/astro/",
   publicDirPath = "./public/",
   devServerTarget,
 }: Options = {}): AstroIntegration {

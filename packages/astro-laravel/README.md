@@ -9,6 +9,27 @@ With astro-laravel, you can build Laravel views using Astro's JSX-style componen
 
 Unlike solutions such as Inertia.js, the final application does not require a persistent Node.js runtime in production.
 
+## How It Works
+
+During development:
+
+* Astro handles views compilation and HMR
+* Requests are proxied through Astro for seamless development experience
+
+When building for production:
+
+* `.blade.php.astro` files are compiled into Blade templates
+* Static assets are emitted into Laravel's `public/` directory
+* No Node.js runtime is required in production
+
+Laravel continues to handle:
+
+* Routing
+* Controllers
+* Middleware
+* Authentication
+* Server-side rendering
+
 ## Installation
 
 ### Prerequisites
@@ -46,7 +67,7 @@ Unlike solutions such as Inertia.js, the final application does not require a pe
        devProxyTarget: "http://localhost:8001", // Your local laravel server URL
 
        // Optional
-       viewsDirPath: "./resources/views/",
+       viewsDirPath: "./resources/views/astro/",
        publicDirPath: "./public/",
      }),
      image: {
@@ -82,7 +103,7 @@ Unlike solutions such as Inertia.js, the final application does not require a pe
 
    <Layout>
      <h1>
-       Hello {'{{ $name `}}'}
+       Hello {'{{ $name }}'}
      </h1>
    </Layout>
    ```
@@ -101,19 +122,19 @@ Unlike solutions such as Inertia.js, the final application does not require a pe
     use Illuminate\Support\Facades\Route;
 
     Route::get('/', function () {
-        return view('welcome', ['name' => 'User Name']);
+        return view('astro/welcome', ['name' => 'User Name']);
     });
 
   ```
 
 ## Configuration Options
 
-| Option            | Description                                | Default                              |
-| ----------------- | ------------------------------------------ | ------------------------------------ |
-| `InstallationDir` | Path to your Laravel application           | Required                             |
-| `devProxyTarget`  | Local Laravel server URL                   | Required                             |
-| `viewsDirPath`    | Output directory for generated Blade views | `{InstallationDir}/resources/views/` |
-| `publicDirPath`   | Output directory for generated assets      | `{InstallationDir}/public/`          |
+| Option            | Description                                                                     | Default                                    |
+|-------------------|---------------------------------------------------------------------------------|--------------------------------------------|
+| `installationDir` | Path to your Laravel application                                                | Required                                   |
+| `devProxyTarget`  | Local Laravel server URL                                                        | Required                                   |
+| `viewsDirPath`    | Directory where compiled Blade templates are written and replaced during builds | `{installationDir}/resources/views/astro/` |
+| `publicDirPath`   | Output directory for generated assets                                           | `{installationDir}/public/`                |
 
 
 ## Build for Production
@@ -126,10 +147,18 @@ npm run build
 
 Generated output:
 
-* Blade views → `resources/views/`
+* Blade views → `resources/views/astro/`
 * Static assets → `public/`
 
 Both directories can be customized using `viewsDirPath` and `publicDirPath`.
+
+## View Directory
+
+By default, compiled Blade templates are generated into `resources/views/astro/`, The `/astro` suffix is intentional.
+
+During builds, the adapter replaces the contents of the configured `viewsDirPath` directory with freshly compiled views. Using a dedicated subdirectory helps avoid accidentally overwriting existing Laravel Blade templates.
+
+If you change `viewsDirPath`, it is recommended to use a dedicated directory exclusively managed by `astro-laravel`.
 
 ## Public Assets
 
